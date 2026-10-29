@@ -9,8 +9,8 @@ class Input{
         this.AddKeyUpListner(this._onKeyUp);
     }
 
-    _addEventListner(element, type, callback){
-        element.addEventListener(type, callback);
+    _addEventListner(element, type, callback, options){
+        element.addEventListener(type, callback, options);
         this.events.push({element, type, callback});
     }
 
@@ -36,6 +36,11 @@ class Input{
 
     AddMouseUpListner(callback){
         this._addEventListner(document.body, 'mouseup', callback);
+    }
+
+    AddTouchListner(type, callback){
+        // Non-passive so handlers can preventDefault scrolling/zooming
+        this._addEventListner(document, type, callback, {passive: false});
     }
 
     _onKeyDown = (event) => {

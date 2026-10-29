@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  # webpack 5.30 hashes with md4, which Node 17+ only allows via the legacy OpenSSL provider
+  NODE_OPTIONS = "--openssl-legacy-provider"

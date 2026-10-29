@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title><%= htmlWebpackPlugin.options.title %></title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -9,6 +10,11 @@
     <style>
       body{
         margin: 0;
+        overflow: hidden;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
         font-family: 'Roboto', sans-serif;
         color: white;
       }
@@ -49,6 +55,30 @@
       }
       #game_hud{
         visibility: hidden;
+        pointer-events: none;
+      }
+      #fire_button{
+        display: none;
+        position: absolute;
+        right: 5%;
+        bottom: 20%;
+        width: 110px;
+        height: 110px;
+        margin: 0;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        background-color: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 1.2em;
+        pointer-events: auto;
+      }
+      #fire_button:active{
+        background-color: rgba(255, 255, 255, 0.35);
+      }
+      #controls_hint{
+        margin-top: 5%;
+        color: rgb(160, 160, 160);
+        line-height: 1.6;
       }
       #menu{
         position: absolute;
@@ -88,6 +118,10 @@
     <div id="menu">
       <h1>Shooter Game Demo</h1>
       <button id="start_game">NEW GAME</button>
+      <div id="controls_hint">
+        WASD move &middot; Space jump &middot; R reload &middot; Click or F to fire<br>
+        Touch screen: drag anywhere to look &middot; hold FIRE to shoot
+      </div>
     </div>
     <div id="game_hud">
       <img id="crosshair" src="<%=require('./ui/crosshair.png')%>" />
@@ -96,6 +130,7 @@
         <span>|</span>
         <span id="max_ammo">0</span>
       </div>
+      <button id="fire_button">FIRE</button>
       <div id="health_container">
         <div id="health_progress"></div>
       </div>

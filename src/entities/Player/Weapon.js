@@ -98,12 +98,11 @@ export default class Weapon extends Component{
 
     SetupInput(){
         Input.AddMouseDownListner( e => {
-            if(e.button != 0 || this.reloading){
+            if(e.button != 0){
                 return;
             }
 
-            this.shoot = true;
-            this.shootTimer = 0.0;
+            this.StartShooting();
         });
 
         Input.AddMouseUpListner( e => {
@@ -120,7 +119,44 @@ export default class Weapon extends Component{
             if(e.code == "KeyR"){
                 this.Reload();
             }
+
+            if(e.code == "KeyF"){
+                this.StartShooting();
+            }
         });
+
+        Input.AddKeyUpListner(e => {
+            if(e.code == "KeyF"){
+                this.shoot = false;
+            }
+        });
+
+        // On-screen fire button for touch screens
+        Input.AddTouchListner('touchstart', e => {
+            if(!e.target.closest || !e.target.closest('#fire_button')){
+                return;
+            }
+
+            e.preventDefault();
+            this.StartShooting();
+        });
+
+        const stopTouchShooting = e => {
+            if(e.target.closest && e.target.closest('#fire_button')){
+                this.shoot = false;
+            }
+        };
+        Input.AddTouchListner('touchend', stopTouchShooting);
+        Input.AddTouchListner('touchcancel', stopTouchShooting);
+    }
+
+    StartShooting(){
+        if(this.reloading){
+            return;
+        }
+
+        this.shoot = true;
+        this.shootTimer = 0.0;
     }
 
     Reload(){
