@@ -20,6 +20,10 @@ export default class PlayerControls extends Component{
         this.decceleration = -7.0;
 
         this.mouseSpeed = 0.002;
+        this.touchSpeed = 0.005;
+        this.lookTouchId = null;
+        this.lastTouchX = 0;
+        this.lastTouchY = 0;
         this.physicsComponent = null;
         this.isLocked = false;
 
@@ -45,6 +49,12 @@ export default class PlayerControls extends Component{
 
         Input.AddMouseMoveListner(this.OnMouseMove);
 
+        // Touch screens: drag anywhere on the screen to look around
+        Input.AddTouchListner('touchstart', this.OnTouchStart);
+        Input.AddTouchListner('touchmove', this.OnTouchMove);
+        Input.AddTouchListner('touchend', this.OnTouchEnd);
+        Input.AddTouchListner('touchcancel', this.OnTouchEnd);
+
         document.addEventListener('pointerlockchange', this.OnPointerlockChange)
 
         Input.AddClickListner( () => {
@@ -69,9 +79,59 @@ export default class PlayerControls extends Component{
         }
     
         const { movementX, movementY } = event
-    
-        this.angles.y -= movementX * this.mouseSpeed;
-        this.angles.x -= movementY * this.mouseSpeed;
+        this.Look(movementX, movementY, this.mouseSpeed);
+    }
+
+    IsUITouch(event){
+        return event.target.closest && event.target.closest('#menu, #fire_button');
+    }
+
+    OnTouchStart = (event) => {
+        if (this.IsUITouch(event)) {
+            return;
+        }
+
+        event.preventDefault();
+
+        if (this.lookTouchId !== null) {
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        this.lookTouchId = touch.identifier;
+        this.lastTouchX = touch.clientX;
+        this.lastTouchY = touch.clientY;
+    }
+
+    OnTouchMove = (event) => {
+        if (this.IsUITouch(event)) {
+            return;
+        }
+
+        event.preventDefault();
+
+        for (const touch of event.changedTouches) {
+            if (touch.identifier !== this.lookTouchId) {
+                continue;
+            }
+
+            this.Look(touch.clientX - this.lastTouchX, touch.clientY - this.lastTouchY, this.touchSpeed);
+            this.lastTouchX = touch.clientX;
+            this.lastTouchY = touch.clientY;
+        }
+    }
+
+    OnTouchEnd = (event) => {
+        for (const touch of event.changedTouches) {
+            if (touch.identifier === this.lookTouchId) {
+                this.lookTouchId = null;
+            }
+        }
+    }
+
+    Look(dx, dy, speed){
+        this.angles.y -= dx * speed;
+        this.angles.x -= dy * speed;
 
         this.angles.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.angles.x));
 

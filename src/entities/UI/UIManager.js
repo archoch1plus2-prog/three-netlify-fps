@@ -17,5 +17,9 @@ export default class UIManager extends Component{
 
     Initialize(){
         document.getElementById("game_hud").style.visibility = 'visible';
+
+        if(navigator.maxTouchPoints > 0 || 'ontouchstart' in window){
+            document.getElementById("fire_button").style.display = 'block';
+        }
     }
 }

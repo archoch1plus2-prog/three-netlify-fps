@@ -312,6 +312,9 @@ class FPSGameApp{
     window.cancelAnimationFrame(this.animFrameId);
     Input.ClearEventListners();
 
+    // iOS/iPadOS keeps audio suspended until resumed from a user gesture
+    this.listener.context.resume();
+
     //Create entities and physics
     this.scene.clear();
     this.SetupPhysics();
